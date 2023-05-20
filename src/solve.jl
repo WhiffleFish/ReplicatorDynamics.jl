@@ -3,7 +3,7 @@ function solve(game::Game, π0::NTuple{2, <:AbstractVector}; tspan=(0.0,100.0))
     prob = ODEProblem(p0, tspan) do du, u, p, t
         policy_grad!(du, game.m, u)
     end
-    return DifferentialEquations.solve(prob, Tsit5())
+    return OrdinaryDiffEq.solve(prob, Tsit5())
 end
 
 function policy_grad!(∇π, A, π1, π2)
