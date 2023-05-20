@@ -1,6 +1,6 @@
 module ReplicatorDynamics
 
-using DifferentialEquations
+using OrdinaryDiffEq
 using BlockArrays
 using LinearAlgebra
 

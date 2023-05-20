@@ -1,6 +1,6 @@
 function solve(game::Game, π0::NTuple{2, <:AbstractVector}; tspan=(0.0,100.0))
     p0 = mortar(collect(π0))
-    prob = ODEProblem(p0, tspan) do du, u, p, t
+    prob = OrdinaryDiffEq.ODEProblem(p0, tspan) do du, u, p, t
         policy_grad!(du, game.m, u)
     end
     return OrdinaryDiffEq.solve(prob, Tsit5())
