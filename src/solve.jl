@@ -1,5 +1,4 @@
 function solve(game::Game, π0::NTuple{2, <:AbstractVector}; tspan=(0.0,100.0))
-    # ∇π = mortar([zeros(length(π1)), zeros(length(π1))])
     p0 = mortar(collect(π0))
     prob = ODEProblem(p0, tspan) do du, u, p, t
         policy_grad!(du, game.m, u)
@@ -18,7 +17,7 @@ function policy_grad!(∇π, A, π1, π2)
     nothing
 end
 
-policy_grad!(∇π, A, p::BlockVector) = policy_grad!(∇π, A, p[Block(2)], p[Block(2)])
+policy_grad!(∇π, A, p::BlockVector) = policy_grad!(∇π, A, p[Block(1)], p[Block(2)])
 
 function policy_grad(A, π1, π2)
     ∇π = mortar([zeros(length(π1)), zeros(length(π1))]) 
