@@ -29,4 +29,4 @@ ax = TernaryPlots.ternary_axes(
     yguide="P",
     zguide="S",
 )
-p = Plots.plot!(t1[1,:], t1[:,2], legend=false)
+p = Plots.plot!(t1[1,:], t1[2,:], legend=false, lw=2)
