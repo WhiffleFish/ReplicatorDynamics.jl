@@ -4,10 +4,10 @@ using OrdinaryDiffEq
 using BlockArrays
 using LinearAlgebra
 
-include("game.jl")
-export Game
+include("check.jl")
+export simplex_check
 
 include("solve.jl")
-export solve, avg_strats
+export ReplicatorSolver, solve, avg_strats
 
 end # module ReplicatorDynamics

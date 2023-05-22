@@ -1,7 +1,11 @@
-function solve(game::Game, π0::NTuple{2, <:AbstractVector}; tspan=(0.0,100.0))
+Base.@kwdef struct ReplicatorSolver
+    t::Float64 = 100.
+end
+
+function solve(sol::ReplicatorSolver, A::AbstractMatrix, π0::NTuple{2, <:AbstractVector})
     p0 = mortar(collect(π0))
-    prob = OrdinaryDiffEq.ODEProblem(p0, tspan) do du, u, p, t
-        policy_grad!(du, game.m, u)
+    prob = OrdinaryDiffEq.ODEProblem(p0, (0.,sol.t)) do du, u, p, t
+        policy_grad!(du, A, u)
     end
     return OrdinaryDiffEq.solve(prob, Tsit5())
 end
