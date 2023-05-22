@@ -4,23 +4,36 @@ Base.@kwdef struct RegularizedSolver
     η::Float64 = 0.2
 end
 
+struct RegularizedResults{T<:BlockArray}
+    res::T
+end
+
+function RegularizedResults(data::Vector{<:SciMLBase.ODESolution})
+    v = map(data) do res
+        reduce(vcat,res.u')
+    end
+    return mortar(v[:,:])
+end
+
 function solve(sol::RegularizedSolver, A::AbstractMatrix, π0::NTuple{2, <:AbstractVector})
     (;iter, η) = sol
     p0 = mortar(collect(π0))
-    π_fix = deepcopy(p0)
+    π_fix = copy(p0)
+    res_hist = SciMLBase.ODESolution[]
     for i ∈ 1:iter
         @show i
-        prob = OrdinaryDiffEq.ODEProblem(p0, (0.,sol.t)) do du, u, p, t
+        prob = OrdinaryDiffEq.ODEProblem(copy(π_fix), (0.,sol.t)) do du, u, p, t
             reg_policy_grad!(du, A, u, π_fix, η)
         end
         res = OrdinaryDiffEq.solve(prob, Tsit5())
+        push!(res_hist, res)
         π_fix = last(res)
     end
-    return π_fix
+    return RegularizedResults(res_hist)
 end
 
 function regularized_game(A, π1, π2, π1_fix, π2_fix, η)
-    A′ = zero(A)
+    A′ = similar(A)
     @assert simplex_check(π1) "$π1"
     @assert simplex_check(π2) "$π2"
     @assert simplex_check(π1_fix) "$π1_fix"
@@ -31,7 +44,6 @@ function regularized_game(A, π1, π2, π1_fix, π2_fix, η)
             A′[a1, a2] = A[a1, a2] - η*log(π1[a1] / π1_fix[a1]) + η*log(π2[a2] / π2_fix[a2])
         end
     end
-    # @show A′
     return A′
 end
 
