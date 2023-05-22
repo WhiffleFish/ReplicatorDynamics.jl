@@ -29,8 +29,12 @@ function policy_grad(A, π1, π2)
     return ∇π
 end
 
-function avg_strats(res)
-    y = cumsum(reduce(vcat, res.u'); dims=1)
+avg_strats(res::SciMLBase.ODESolution) = avg_strats(res.u)
+
+avg_strats(data::Vector{<:AbstractVector}) = avg_strats(reduce(vcat, data'))
+
+function avg_strats(data::AbstractMatrix)
+    y = cumsum(data; dims=1)
     eachrow(y) ./= axes(y, 1)
     return y
 end
