@@ -1,0 +1,4 @@
+[deps]
+BlockArrays = "8e7c35d0-a365-5155-bbbb-fb81a777f24e"
+GMT = "5752ebe1-31b9-557e-87aa-f909b540aa54"
+TernaryPlots = "1f5e811d-5acb-4dfc-9a45-b3a27d369aae"
