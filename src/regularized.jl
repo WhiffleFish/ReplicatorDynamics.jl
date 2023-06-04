@@ -25,7 +25,7 @@ function solve(sol::RegularizedSolver, A::AbstractMatrix, π0::NTuple{2, <:Abstr
         prob = OrdinaryDiffEq.ODEProblem(copy(π_fix), (0.,sol.t)) do du, u, p, t
             reg_policy_grad!(du, A, u, π_fix, η)
         end
-        res = OrdinaryDiffEq.solve(prob, Tsit5())
+        res = DifferentialEquations.solve(prob)
         push!(res_hist, res)
         π_fix = last(res)
     end
@@ -62,5 +62,21 @@ function reg_policy_grad!(∇π, A, _π, _π_fix, η)
     )
     return ∇π
 end
+
+function lyapunov(Π_fix, Π)
+    π1_fix, π2_fix = Π_fix[Block(1)], Π_fix[Block(2)]
+    π1, π2 = Π[Block(1)], Π[Block(2)]
+    
+    v = 0.0
+    for a ∈ eachindex(π1)
+        v += π1_fix[a]*log(π1_fix[a] / π1[a])
+    end
+    for a ∈ eachindex(π2)
+        v += π2_fix[a]*log(π2_fix[a] / π2[a])
+    end
+    return v
+end
+
+lyapunov(Π_fix::BlockVector) = Base.Fix1(lyapunov, Π_fix)
 
 reg_policy_grad(A, _π, _π_fix, η) = reg_policy_grad!(zero(_π), A, _π, _π_fix, η)

@@ -8,8 +8,8 @@ begin
     using Plots
 end
 
-game = Float64[
-    0 -1 1
+game = @SMatrix Float64[
+    0 -1 0
     1 0 -1
     -1 1 0
 ]

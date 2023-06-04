@@ -1,6 +1,6 @@
 module ReplicatorDynamics
 
-using OrdinaryDiffEq
+using DifferentialEquations
 using BlockArrays
 using LinearAlgebra
 
@@ -11,6 +11,6 @@ include("solve.jl")
 export ReplicatorSolver, solve, avg_strats
 
 include("regularized.jl")
-export RegularizedSolver
+export RegularizedSolver, lyapunov
 
 end # module ReplicatorDynamics
